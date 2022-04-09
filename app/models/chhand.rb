@@ -28,7 +28,7 @@ class Chhand < ApplicationRecord
       chhand_type = ChhandType.create(chhand_name_unicode: chhand_blob['chhandType'])
     end
 
-    chhand = chapter.chhands.create(
+    chhand = chapter.chhands.create!(
       order_number: order_number,
       chhand_type_id: chhand_type.id,
       prefix_unicode: chhand_blob['chhandPretext'].strip!
