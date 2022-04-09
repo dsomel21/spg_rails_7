@@ -3,66 +3,6 @@ class Tuk < ApplicationRecord
   belongs_to :chhand_type
   belongs_to :chapter
   belongs_to :pauri
-  require ("pry")
-  require("csv")
-
-  def self.import_translations
-    require("csv")
-    csv = CSV.parse(File.read("final_csv.csv"), headers: true)
-
-    csv.each do |row|
-
-      missing_database_pauris = []
-
-      if (row["Chapter:"])
-        chapter = Chapter.find_by_number(row["Chapter:"])
-        # if chapter.number == 35 || chapter.number == 36 || chapter.number == 37 || chapter.number == 38 || chapter.number == 39 || chapter.number == 40 || chapter.number == 41
-        # if chapter.number == 31 || chapter.number == 32 || chapter.number == 33 
-        if chapter.number == 34 
-          pauri = chapter.pauris.find_by_number(row["Pauri:"])
-
-
-          # Split the CSV Tuks
-          # trans_array = row["Rough Translation:"].to_s.split("\r\n")
-          # if trans_array.count <= 1
-          #   trans_array = row["Rough Translation:"].to_s.split("\n")
-          # end
-
-          # Maybe Gurpartaap Fix??
-          # if trans_array.count <= 1
-            trans_array = row["Rough Translation:"].to_s.split(";")
-          # end
-
-
-          # if trans_array.count <= 1
-          #   trans_array = row["Rough Translation:"].to_s.split(".")
-          # end
-
-          # if pauri.number == 25
-          #   binding.pry
-          # end
-
-          puts "trans_array"
-          puts trans_array
-
-          i = 1
-          trans_array.each do |translation|
-            if translation.length < 255 
-              tuk = pauri.tuks.find_by_line_number(i)
-              if !tuk
-                missing_database_pauris << row
-              else 
-                puts row
-                tuk.translation = translation
-                tuk.save
-              end
-            end
-            i += 1
-          end
-        end
-      end
-    end
-  end
 
 
 
