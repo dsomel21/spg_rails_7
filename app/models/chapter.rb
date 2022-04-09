@@ -20,11 +20,18 @@ class Chapter < ApplicationRecord
   end
 
   def self.import_chapter_json(blob)
-    book = blob['book']
-    book_id = book[:id]
+    book_blob = blob['book']
     
-    Book.where(
-      id: b,
-      title_transliteration_english: voter).first_or_create
+    puts "book_blob['id'] #{book_blob['id']}"
+    Book.destroy(book_blob['id'])
+    # book = Book.create(
+    #   id: book_blob['id'],
+    #   book_order: book_blob['book_order'],
+    #   title_gs: book_blob['title_gs'],
+    #   title_transliteration_english: book_blob['title_transliteration_english'],
+    #   description_english: book_blob['description_english']
+    # )
+
+    # book.chapters.destroy_all
   end
 end
