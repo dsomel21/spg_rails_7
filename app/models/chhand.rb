@@ -22,16 +22,22 @@ class Chhand < ApplicationRecord
 
   # Wierd thing here is... the chhand_order isn't PROVIDED from the
   def self.create_individual_chhand(chhand_blob, order_number, chapter)
-    chhand_type = ChhandType.find_by(chhand_name_unicode: chhand_blob['chhandType'])
+    chhand_type = ChhandType.find_by(chhand_name_unicode: chhand_blob['chhandTypeUnicode'])
     if chhand_type.nil?
-      puts '🛑 do not have the chhand_name_english, or chhand_name_gs'
-      chhand_type = ChhandType.create(chhand_name_unicode: chhand_blob['chhandType'])
+      chhand_type = ChhandType.create(
+        chhand_name_unicode: chhand_blob['chhandTypeUnicode'],
+        chhand_name_english: chhand_blob['chhandTypeEnglish'],
+        chhand_name_gs: chhand_blob['chhandTypeGS']
+      )
     end
+
+    puts pp chhand_blob.to_json
 
     chhand = chapter.chhands.create!(
       order_number: order_number,
       chhand_type_id: chhand_type.id,
-      prefix_unicode: chhand_blob['chhandPretext'].strip!
+      prefix_unicode: chhand_blob['chhandPretext'].strip!,
+      chhand_name_english: chhand_blob['chhandTypeEnglish']
     )
 
     Pauri.handle_pauris_blob(chhand_blob['pauris'], chhand)

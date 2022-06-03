@@ -23,12 +23,12 @@ class Chapter < ApplicationRecord
   def self.import_blob(blob)
     book_blob = blob['book']
 
-    Book.find_by(id: book_blob['id']).try(:destroy)
-    book = Book.create(
+    # Book.find_by(id: book_blob['id']).try(:destroy)
+    book = Book.find_or_create_by!(
       id: book_blob['id'],
-      book_order: book_blob['book_order'],
-      title_gs: book_blob['title_gs'],
-      title_transliteration_english: book_blob['title_transliteration_english'],
+      book_order: book_blob['bookOrder'],
+      title_gs: book_blob['titleGS'],
+      title_transliteration_english: book_blob['titleEnglish'],
       description_english: book_blob['description_english']
     )
     handle_chapters_blob(book_blob['chapters'], book)
@@ -51,21 +51,19 @@ class Chapter < ApplicationRecord
   end
 
   def self.create_individual_chapter(chapter_blob, book)
-    puts 'chapter_blob is------'
-    # puts chapter_blob
-
-    puts "book is;;;;;; #{book}"
-
     exp_order_number = chapter_blob['order_number']
-    puts "exp_order_number #{exp_order_number}"
     order_number = exp_order_number == 1 ? chapter_blob['number'] : exp_order_number
-    chapter = book.chapters.create!(
-      title_unicode: chapter_blob['title_unicode'],
+
+    chapter = book.chapters.find_or_create_by!(
+      title_unicode: chapter_blob['titleUnicode'],
       title_gs: chapter_blob['title_gs'],
-      title_transliteration_english: chapter_blob['title_transliteration_english'],
+      title_transliteration_english: chapter_blob['titleEnglish'],
       number: chapter_blob['number'],
       order_number: order_number
     )
+
+    puts "Destroying Chapter ID: #{chapter.id}'s Chhands."
+    chapter.chhands.destroy
     Chhand.handle_chhands_blob(chapter_blob['chhands'], chapter)
   end
 end
