@@ -17,21 +17,23 @@ class Chapter < ApplicationRecord
       throw e
     end
     blob = JSON.parse(File.read(path))
+    puts "blob.count... #{blob.count}"
     Chapter.import_blob(blob)
   end
 
   def self.import_blob(blob)
-    book_blob = blob['book']
 
-    # Book.find_by(id: book_blob['id']).try(:destroy)
-    book = Book.find_or_create_by!(
-      id: book_blob['id'],
-      book_order: book_blob['bookOrder'],
-      title_gs: book_blob['titleGS'],
-      title_transliteration_english: book_blob['titleEnglish'],
-      description_english: book_blob['description_english']
-    )
-    handle_chapters_blob(book_blob['chapters'], book)
+    blob.each do |book_blob|
+      # Book.find_by(id: book_blob['id']).try(:destroy)
+      book = Book.find_or_create_by!(
+        id: book_blob['id'],
+        book_order: book_blob['bookOrder'],
+        title_gs: book_blob['titleGS'],
+        title_transliteration_english: book_blob['titleEnglish'],
+        description_english: book_blob['description_english']
+      )
+      handle_chapters_blob(book_blob['chapters'], book)
+    end
   end
 
   ###
@@ -54,12 +56,14 @@ class Chapter < ApplicationRecord
     exp_order_number = chapter_blob['order_number']
     order_number = exp_order_number == 1 ? chapter_blob['number'] : exp_order_number
 
+    # Refactor this in the future so that if there's slight changes, it doesn't create
+    # a whole new chapter...
     chapter = book.chapters.find_or_create_by!(
       title_unicode: chapter_blob['titleUnicode'],
-      title_gs: chapter_blob['title_gs'],
+      title_gs: chapter_blob['titleGS'],
       title_transliteration_english: chapter_blob['titleEnglish'],
       number: chapter_blob['number'],
-      order_number: order_number
+      order_number: order_number,
     )
 
     puts "Destroying Chapter ID: #{chapter.id}'s Chhands."
