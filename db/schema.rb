@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_20_205946) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_20_205001) do
   create_table "books", force: :cascade do |t|
     t.integer "sequence", null: false
     t.string "title", null: false
@@ -24,8 +24,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_20_205946) do
 
   create_table "chapter_footnotes", force: :cascade do |t|
     t.integer "chapter_id", null: false
-    t.text "dr_vir_singh_footnotes", limit: 25000
-    t.text "vs_footnotes", limit: 25000
+    t.text "dr_vir_singh_footnote", limit: 25000
+    t.text "vs_footnote", limit: 25000
     t.boolean "is_endnote", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -35,8 +35,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_20_205946) do
   create_table "chapters", force: :cascade do |t|
     t.integer "book_id", null: false
     t.integer "number", null: false
-    t.string "name", limit: 500
-    t.string "vs_name"
+    t.string "title", limit: 500
+    t.string "vs_title"
     t.string "vs_short_summary"
     t.text "vs_long_summary"
     t.text "artwork_url"
@@ -64,28 +64,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_20_205946) do
 
   create_table "pauri_footnotes", force: :cascade do |t|
     t.integer "pauri_id_id", null: false
-    t.text "dr_vir_singh_footnotes"
-    t.text "vs_footnotes"
+    t.text "dr_vir_singh_footnote"
+    t.text "vs_footnote"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["pauri_id_id"], name: "index_pauri_footnotes_on_pauri_id_id"
-  end
-
-  create_table "pauri_translations", force: :cascade do |t|
-    t.integer "pauri_id", null: false
-    t.integer "chapter_id", null: false
-    t.string "en_translation", null: false
-    t.string "en_translator"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["chapter_id"], name: "index_pauri_translations_on_chapter_id"
-    t.index ["pauri_id"], name: "index_pauri_translations_on_pauri_id"
   end
 
   create_table "pauris", force: :cascade do |t|
     t.integer "number", null: false
     t.integer "chapter_id", null: false
     t.integer "chhand_id", null: false
+    t.string "en_translation"
+    t.string "en_translator"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chapter_id"], name: "index_pauris_on_chapter_id"
@@ -101,17 +92,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_20_205946) do
     t.index ["chapter_id"], name: "index_samaptis_on_chapter_id"
   end
 
-  create_table "tuk_translations", force: :cascade do |t|
-    t.integer "tuk_id", null: false
-    t.integer "chapter_id", null: false
-    t.string "en_translation", null: false
-    t.string "en_translator"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["chapter_id"], name: "index_tuk_translations_on_chapter_id"
-    t.index ["tuk_id"], name: "index_tuk_translations_on_tuk_id"
-  end
-
   create_table "tuks", force: :cascade do |t|
     t.integer "chapter_id", null: false
     t.integer "chhand_id", null: false
@@ -119,6 +99,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_20_205946) do
     t.integer "sequence", null: false
     t.string "content", null: false
     t.string "original_content"
+    t.string "en_translation", null: false
+    t.string "en_translator"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chapter_id"], name: "index_tuks_on_chapter_id"
@@ -131,13 +113,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_20_205946) do
   add_foreign_key "chhands", "chapters"
   add_foreign_key "chhands", "chhand_types"
   add_foreign_key "pauri_footnotes", "pauri_ids"
-  add_foreign_key "pauri_translations", "chapters"
-  add_foreign_key "pauri_translations", "pauris"
   add_foreign_key "pauris", "chapters"
   add_foreign_key "pauris", "chhands"
   add_foreign_key "samaptis", "chapters"
-  add_foreign_key "tuk_translations", "chapters"
-  add_foreign_key "tuk_translations", "tuks"
   add_foreign_key "tuks", "chapters"
   add_foreign_key "tuks", "chhands"
   add_foreign_key "tuks", "pauris"

@@ -7,7 +7,10 @@ class CreateTuks < ActiveRecord::Migration[7.0]
       t.integer :sequence, null: false
       t.string :content, null: false # Gurmukhi Unicode
       t.string :original_content     # Raw parsed content
-
+      
+      # Translations
+      t.string :en_translation, null: false
+      t.string :en_translator # Vidhiya Saagar, Manglacharan, Bhai Gurdas Education Trust, Kamalpreet, etc. etc.
       t.timestamps
     end
   end
